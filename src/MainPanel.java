@@ -85,8 +85,8 @@ public class MainPanel extends JPanel {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				byte[] b = new byte[1024];
-				DatagramPacket initPacket = new DatagramPacket(b, 1024);
+				byte[] b = new byte[10024];
+				DatagramPacket initPacket = new DatagramPacket(b, 10024);
 				try {
 					receiveSocket.receive(initPacket);
 					System.out.println("Received a Packet");
