@@ -15,7 +15,7 @@ public class SendFile {
 	private File sendFile;
 	private int sendPort;
 	private DatagramSocket sendSocket;
-	private int sendingAmount = 204800;
+	private int sendingAmount = 20480;
 
 	public SendFile(InetAddress sendAddress, File sendFile, int sendPort) {
 		this.sendAddress = sendAddress;
