@@ -7,8 +7,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.text.DecimalFormat;
 
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
@@ -73,14 +73,17 @@ public class SendFile {
 					int totalSent = 0;
 					int total = Math.toIntExact(sendFile.length());
 					int x;
-					int percent;
+					double percent;
 					progress.setStringPainted(true);
 					System.out.println("Send Socket: " + sendSocket.getLocalPort());
 					while ((x = input.read(sendingData)) != -1) {
 						totalSent += x;
-						percent = totalSent/total;
+						percent = (double) totalSent/total;
+						percent = percent * 100;
+						DecimalFormat df = new DecimalFormat("#.00");
+						String percentFormat = df.format(percent);
 						progress.setValue(totalSent);
-						progress.setString(percent + "%");
+						progress.setString(percentFormat + "%");
 						sendPacket = new DatagramPacket(sendingData, sendingData.length, sendAddress, newSendPort);
 						sendSocket.send(sendPacket);
 						System.out.println("Attempting to receive ACK");
