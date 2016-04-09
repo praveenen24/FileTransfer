@@ -37,13 +37,16 @@ public class ReceiveFile {
 		byte[] ack = {0,4};
 		DatagramPacket acknowledge = new DatagramPacket(ack,2,packet.getAddress(),packet.getPort());
 		try {
+			int total = 0;
 			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(fileName));
 			while(true) {
 				socket.send(acknowledge);
 				socket.receive(packet);
 				if (packet.getLength() == 0) break;
 				out.write(packet.getData());
+				total+=packet.getLength();
 				System.out.println("Writing " + packet.getLength() + " bytes");
+				System.out.println("Total Printed: " + total);
 				System.out.println(packet.getLength());
 			}
 			out.close();
