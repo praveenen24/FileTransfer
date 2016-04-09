@@ -3,6 +3,7 @@ import java.io.FileOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public class ReceiveFile {
 	private DatagramPacket packet;
@@ -41,7 +42,15 @@ public class ReceiveFile {
 			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(fileName));
 			while(true) {
 				socket.send(acknowledge);
+				socket.setSoTimeout(1000);
+				try {
 				socket.receive(packet);
+				} catch (SocketTimeoutException e) {
+					System.out.println("TIEMOUT! RESENDING!");
+					socket.send(acknowledge);
+					socket.setSoTimeout(0);
+					socket.receive(packet);
+				}
 				if (packet.getLength() == 0) break;
 				out.write(packet.getData());
 				total+=packet.getLength();

@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 import javax.swing.JProgressBar;
 
@@ -75,7 +76,15 @@ public class SendFile {
 						sendPacket = new DatagramPacket(sendingData, sendingData.length, sendAddress, newSendPort);
 						sendSocket.send(sendPacket);
 						System.out.println("Attempting to receive ACK");
-						sendSocket.receive(sendPacket);	
+						sendSocket.setSoTimeout(1500);
+						try {
+							sendSocket.receive(sendPacket);	
+						} catch (SocketTimeoutException e) {
+							sendSocket.setSoTimeout(0);
+							System.out.println("Timed Out! Resending");
+							sendSocket.send(sendPacket);
+							sendSocket.receive(sendPacket);
+						}
 						System.out.println("Received a Packet!");
 					}
 					byte[] empty = {};
