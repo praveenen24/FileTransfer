@@ -5,17 +5,24 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
+
 public class ReceiveFile {
 	private DatagramPacket packet;
+	private JTextArea textArea;
+	private JProgressBar progress;
 	DatagramSocket socket;
 	
-	public ReceiveFile(DatagramPacket packet) {
+	public ReceiveFile(DatagramPacket packet, JTextArea textArea, JProgressBar progress) {
 		this.packet = packet;
 		try {
 			socket = new DatagramSocket();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		this.textArea = textArea;
+		this.progress = progress;
 		receive();
 	}
 	
@@ -40,6 +47,7 @@ public class ReceiveFile {
 		try {
 			int total = 0;
 			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(fileName));
+			textArea.append("----------------------------------\n");
 			while(true) {
 				socket.send(acknowledge);
 				socket.setSoTimeout(3000);
@@ -54,12 +62,12 @@ public class ReceiveFile {
 				if (packet.getLength() == 0) break;
 				out.write(packet.getData());
 				total+=packet.getLength();
-				System.out.println("Writing " + packet.getLength() + " bytes");
-				System.out.println("Total Printed: " + total);
-				System.out.println(packet.getLength());
+				textArea.append("Writing " + packet.getLength() + " bytes\n");
+				textArea.append("Total Printed: " + total + "\n");				
 			}
+			textArea.append("Finished Receiving!\n");
+			textArea.append("----------------------------------\n");
 			out.close();
-			System.out.print("Finished Receiving!");
 		} catch (Exception e) {}
 	}
 	

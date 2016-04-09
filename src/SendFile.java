@@ -8,7 +8,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
 
 public class SendFile {
 	private InetAddress sendAddress;
@@ -16,6 +18,7 @@ public class SendFile {
 	private int sendPort;
 	private DatagramSocket sendSocket;
 	private int sendingAmount = 61140;
+	private int averg;
 
 	public SendFile(InetAddress sendAddress, File sendFile, int sendPort) {
 		this.sendAddress = sendAddress;
@@ -45,14 +48,16 @@ public class SendFile {
 		return b;
 	}
 
-	public void send() {
+	public void send(JProgressBar progress, JTextArea textArea) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				System.out.println("Sending File: " + sendFile);
 				System.out.println("To Address: " + sendAddress);
 				System.out.println("And Port: " + sendPort);
-				JProgressBar bar = new JProgressBar(0, 100);
+				progress.setMaximum(Math.toIntExact(sendFile.length()));
+				progress.setMinimum(0);
+				progress.setValue(0);
 				byte[] b = createRequest();
 				DatagramPacket sendPacket = new DatagramPacket(b, b.length, sendAddress, sendPort);
 				try {
@@ -70,9 +75,7 @@ public class SendFile {
 					System.out.println("Send Socket: " + sendSocket.getLocalPort());
 					while ((x = input.read(sendingData)) != -1) {
 						totalSent += x;
-						long avg = totalSent/sendFile.length();
-						int averg = Math.toIntExact(avg);
-						bar.setValue(averg);
+						progress.setValue(totalSent);
 						sendPacket = new DatagramPacket(sendingData, sendingData.length, sendAddress, newSendPort);
 						sendSocket.send(sendPacket);
 						System.out.println("Attempting to receive ACK");
