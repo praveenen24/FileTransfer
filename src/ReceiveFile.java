@@ -13,7 +13,7 @@ public class ReceiveFile {
 	private JTextArea textArea;
 	private JProgressBar progress;
 	DatagramSocket socket;
-	
+
 	public ReceiveFile(DatagramPacket packet, JTextArea textArea, JProgressBar progress) {
 		this.packet = packet;
 		try {
@@ -25,7 +25,7 @@ public class ReceiveFile {
 		this.progress = progress;
 		receive();
 	}
-	
+
 	public String extractFileName(byte[] b) {
 		String receivedFileName = "";
 		StringBuilder builder = new StringBuilder();
@@ -39,7 +39,7 @@ public class ReceiveFile {
 		}
 		return receivedFileName;
 	}
-	
+
 	public void receive() {
 		String fileName = extractFileName(packet.getData());
 		byte[] ack = {0,4};
@@ -52,12 +52,18 @@ public class ReceiveFile {
 				socket.send(acknowledge);
 				socket.setSoTimeout(3000);
 				try {
-				socket.receive(packet);
+					socket.receive(packet);
 				} catch (SocketTimeoutException e) {
 					System.out.println("TIEMOUT! RESENDING!");
 					socket.send(acknowledge);
-					socket.setSoTimeout(0);
-					socket.receive(packet);
+					try {
+						socket.receive(packet);
+					} catch (SocketTimeoutException e2) {
+						socket.setSoTimeout(0);
+						System.out.println("Timeout Again! Resending");
+						socket.send(acknowledge);
+						socket.receive(packet);
+					}
 				}
 				if (packet.getLength() == 0) break;
 				out.write(packet.getData());
@@ -70,5 +76,5 @@ public class ReceiveFile {
 			out.close();
 		} catch (Exception e) {}
 	}
-	
+
 }

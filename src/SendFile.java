@@ -91,10 +91,16 @@ public class SendFile {
 						try {
 							sendSocket.receive(sendPacket);	
 						} catch (SocketTimeoutException e) {
-							sendSocket.setSoTimeout(0);
 							System.out.println("Timed Out! Resending");
 							sendSocket.send(sendPacket);
-							sendSocket.receive(sendPacket);
+							try {
+								sendSocket.receive(sendPacket);
+							} catch (SocketTimeoutException e2) {
+								sendSocket.setSoTimeout(0);
+								System.out.println("Timeout Again! Resending");
+								sendSocket.send(sendPacket);
+								sendSocket.receive(sendPacket);
+							}
 						}
 						System.out.println("Received a Packet!");
 					}

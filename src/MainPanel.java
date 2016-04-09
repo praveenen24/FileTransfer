@@ -92,7 +92,9 @@ public class MainPanel extends JPanel {
 		layout.putConstraint(SpringLayout.WEST, progress, 121, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.SOUTH, progress, -21, SpringLayout.SOUTH, this);
 		layout.putConstraint(SpringLayout.EAST, progress, -22, SpringLayout.EAST, this);
-		progress.setValue(50);
+		progress.setValue(0);
+		progress.setStringPainted(true);
+		progress.setString("0.0%");
 		layout.putConstraint(SpringLayout.NORTH, portButton, 23, SpringLayout.SOUTH, sendButton);
 		layout.putConstraint(SpringLayout.WEST, portButton, 10, SpringLayout.WEST, this);
 		layout.putConstraint(SpringLayout.WEST, sendButton, 10, SpringLayout.WEST, this);
