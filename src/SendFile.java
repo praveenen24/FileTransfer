@@ -71,11 +71,16 @@ public class SendFile {
 					BufferedInputStream input = new BufferedInputStream(new FileInputStream(sendFile));
 					byte[] sendingData = new byte[sendingAmount];
 					int totalSent = 0;
+					int total = Math.toIntExact(sendFile.length());
 					int x;
+					int percent;
+					progress.setStringPainted(true);
 					System.out.println("Send Socket: " + sendSocket.getLocalPort());
 					while ((x = input.read(sendingData)) != -1) {
 						totalSent += x;
+						percent = totalSent/total;
 						progress.setValue(totalSent);
+						progress.setString(percent + "%");
 						sendPacket = new DatagramPacket(sendingData, sendingData.length, sendAddress, newSendPort);
 						sendSocket.send(sendPacket);
 						System.out.println("Attempting to receive ACK");
