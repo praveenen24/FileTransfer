@@ -42,7 +42,7 @@ public class ReceiveFile {
 			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(fileName));
 			while(true) {
 				socket.send(acknowledge);
-				socket.setSoTimeout(1000);
+				socket.setSoTimeout(3000);
 				try {
 				socket.receive(packet);
 				} catch (SocketTimeoutException e) {
